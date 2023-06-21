@@ -1,15 +1,21 @@
+#root {
+  text-align: center;
+}
+
 .programme {
   font-size: 9px !important;
-  margin: 1rem auto;
+  margin: 0 1rem;
   max-width: 1280px;
 }
 
 .programme .row {
   display: flex;
+
 }
 
 .programme .column {
   flex: 50%;
+  margin-top: 1rem;
 }
 
 .programme table, tr, td, th {
@@ -37,20 +43,4 @@
 @media print {
   @page { margin: 0; }
   body { margin: 1.6cm; }
-}
-
-#root {
-  text-align: center;
-}
-
-red-cell {
-  background-color: red;
-}
-
-blue-cell {
-  background-color: blue;
-}
-
-yellow-cell {
-  background-color: yellow;
 }

@@ -77,7 +77,6 @@ function App() {
 
   return (
     <div className="container">
-      <h2 className="display-4">Speedway Programme Maker</h2>
       <div className="row">
         <div className="col-md-4"></div>
         <div className="col-md-4"> 
