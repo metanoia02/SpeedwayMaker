@@ -46,7 +46,7 @@ function Programme() {
         .sort((a, b) => a.position - b.position);
 
       setAwayTeamRiders(away);
-      padRiders(home);
+      padRiders(away);
 
       const heats = [];
       let heatNumber = 0;
