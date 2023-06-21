@@ -1,5 +1,8 @@
 import { PropTypes } from "prop-types";
 
+/**
+ * Models the api's TeamRiderDTO.
+ */
 RiderRow.propTypes = {
   teamId: PropTypes.number,
   position: PropTypes.number,
@@ -14,13 +17,17 @@ RiderRow.propTypes = {
   }),
 };
 
+/**
+ * A table row of the rider score table.
+ * @param {propTypes} props 
+ */
 export function RiderRow(props) {
   return (
     <>
       <tr>
         <td>{props.position}</td>
         <td>
-          {(props.rider.nickname
+          {(props.rider.nickname // TODO: Remove this logic to api DTO, all names not needed.
             ? props.rider.nickname
             : props.rider.firstName) +
             " " +

@@ -1,3 +1,7 @@
+/**
+ * A table heading for the rider score table.
+ */
+
 export function RiderHeading() {
   return (
     <>

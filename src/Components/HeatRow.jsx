@@ -1,7 +1,7 @@
 import { PropTypes } from "prop-types";
 
 HeatRow.propTypes = {
-  useSpan: PropTypes.bool,
+  useSpan: PropTypes.bool, // Spanned columns should be displayed every 2 rows.
   heat: PropTypes.string,
   riderNo: PropTypes.string,
   riderName: PropTypes.string,
@@ -10,6 +10,10 @@ HeatRow.propTypes = {
   colour: PropTypes.string,
 };
 
+/**
+ * A table row for a heat. One rider of one heat.
+ * @param {propTypes} props 
+ */
 export function HeatRow(props) {
   return (
     <>

@@ -1,3 +1,7 @@
+/**
+ * A table heading row for the list of heats.
+ */
+
 export function HeatHeading() {
   return (
     <>
