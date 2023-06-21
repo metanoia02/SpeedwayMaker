@@ -10,20 +10,28 @@ import { RiderRow } from "../Components/RiderRow";
 
 function padRiders(array) {
   if (array.length < 8) {
+    while(array.length < 8) {
     array.push({
-      position: 8,
+      position: array.length + 1,
       rider: {
         firstName: "",
         lastName: "",
       }
     })
   }
+  }
 };
 
 function Programme() {
   const location = useLocation();
-  const homeId = location.state[0].value;
-  const awayId = location.state[1].value;
+
+  let homeId = undefined;
+  let awayId = undefined;
+
+  if(location.state) {
+    homeId = location.state[0].value;
+    awayId = location.state[1].value;
+  }
 
   const [homeTeamRiders, setHomeTeamRiders] = useState([]);
   const [awayTeamRiders, setAwayTeamRiders] = useState([]);
@@ -34,14 +42,17 @@ function Programme() {
     async function fetchData() {
       const result = await SpeedwayApi.get("/TeamRider");
 
-      const home = result.data
+      let home = [];
+      let away = [];
+
+      home = result.data
         .filter((rider) => rider.teamId == homeId)
         .sort((a, b) => a.position - b.position);
 
       setHomeTeamRiders(home);
       padRiders(home);
 
-      const away = result.data
+      away = result.data
         .filter((rider) => rider.teamId == awayId)
         .sort((a, b) => a.position - b.position);
 
@@ -73,7 +84,9 @@ function Programme() {
           rider = away.filter((rider) => rider.position == heats[i].riderNo);
         }
 
-        if (rider.length == 1) {
+        if(!rider) {
+          rider.riderName = "";
+        } else if (rider.length == 1) {
           heats[i].riderName =
             (rider[0].rider.nickname
               ? rider[0].rider.nickname
