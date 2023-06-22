@@ -1,8 +1,8 @@
-import { useState } from "react";
-import Select, { components } from "react-select";
+import { useState } from 'react';
+import Select, { components } from 'react-select';
 import { useNavigate } from 'react-router-dom';
-import AsyncSelect from "react-select/async";
-import SpeedwayApi from "../api";
+import AsyncSelect from 'react-select/async';
+import SpeedwayApi from '../api';
 
 function App() {
   const [leagueSelection, setSelectedLeague] = useState(null);
@@ -10,33 +10,34 @@ function App() {
   const [options, setOptions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
-  const [teamComponentText, setTeamComponentText] = useState("Home Team:");
+  const [teamComponentText, setTeamComponentText] = useState('Home Team:');
   const navigate = useNavigate();
 
   function onTeamChange(object, { action }) {
     switch (action) {
-      case "input-change":
+      case 'input-change':
         if (object) setSelectedValue(object);
-        return;
-      case "menu-close":
-        return;
-      case "clear":
+        break;
+      case 'menu-close':
+        break;
+      case 'clear':
         setSelectedValue();
-        setTeamComponentText("Select Home Team:");
-        return;
-      case "select-option":
+        setTeamComponentText('Select Home Team:');
+        break;
+      case 'select-option':
         if (object) setSelectedValue(object);
-        setTeamComponentText("Select Away Team:");
-        return;
-      case "remove-value":
+        setTeamComponentText('Select Away Team:');
+        break;
+      case 'remove-value':
         setSelectedValue();
+        break;
       default:
-        return;
+        break;
     }
   }
 
   const fetchLeagues = () => {
-    return SpeedwayApi.get("/leagues").then((result) => {
+    return SpeedwayApi.get('/leagues').then((result) => {
       const res = result.data;
       return res;
     });
@@ -45,16 +46,14 @@ function App() {
   const handleLeagueChange = (value) => {
     setSelectedLeague(value);
     setIsDisabled(false);
-    setSelectedValue("");
+    setSelectedValue('');
   };
 
   function getTeamOptions() {
     setIsLoading(true);
-    return SpeedwayApi.get("/teams")
+    return SpeedwayApi.get('/teams')
       .then((result) => {
-        return result.data.filter(
-          (team) => team.leagueId == leagueSelection.id
-        );
+        return result.data.filter((team) => team.leagueId == leagueSelection.id);
       })
       .then((response) => {
         setOptions(response.map((tag) => ({ label: tag.name, value: tag.id })));
@@ -66,38 +65,42 @@ function App() {
   }
 
   function submitForm() {
-    if(selectedValue.length != 2) return;
+    if (selectedValue.length != 2) return;
 
-    navigate("programme", {replace: false, state:selectedValue});
+    navigate('programme', { replace: false, state: selectedValue });
   }
 
   const controlStyles = {
-    padding: "15px",
+    padding: '15px',
   };
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-4"></div>
-        <div className="col-md-4"> 
-        <p className="h4" style={controlStyles}>League:</p>
+    <div className='container'>
+      <div className='row'>
+        <div className='col-md-4'></div>
+        <div className='col-md-4'>
+          <p className='h4' style={controlStyles}>
+            League:
+          </p>
           <AsyncSelect
-          isReq
-            value={leagueSelection}
+            isReq
             cacheOptions
             defaultOptions
+            value={leagueSelection}
             getOptionLabel={(e) => e.name}
             getOptionValue={(e) => e.id}
             loadOptions={fetchLeagues}
             onChange={handleLeagueChange}
           />
         </div>
-        <div className="col-md-4"></div>
+        <div className='col-md-4'></div>
       </div>
-      <div className="row">
-        <div className="col-md-4"></div>
-        <div className="col-md-4">
-        <p className="h4" style={controlStyles}>{teamComponentText}</p>
+      <div className='row'>
+        <div className='col-md-4'></div>
+        <div className='col-md-4'>
+          <p className='h4' style={controlStyles}>
+            {teamComponentText}
+          </p>
           <Select
             isDisabled={isDisabled}
             closeMenuOnSelect={false}
@@ -112,10 +115,10 @@ function App() {
         </div>
       </div>
       <br />
-      <div className="row">
-        <div className="col-md-4"></div>
-        <div className="col-md-4">
-          <button type="submit" className="btn btn-primary" onClick={submitForm}>
+      <div className='row'>
+        <div className='col-md-4'></div>
+        <div className='col-md-4'>
+          <button type='submit' className='btn btn-primary' onClick={submitForm}>
             Create Programme
           </button>
         </div>
