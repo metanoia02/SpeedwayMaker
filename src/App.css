@@ -1,46 +1,117 @@
 #root {
-  text-align: center;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 .programme {
-  font-size: 9px !important;
-  margin: 0 1rem;
-  max-width: 1280px;
+    max-width: 1280px !important;
+    overflow-x: hidden !important;
+    font-size: 1em;
 }
 
 .programme .row {
-  display: flex;
-
+    display: flex;
 }
 
 .programme .column {
-  flex: 50%;
-  margin-top: 1rem;
+    flex: 50%;
+    margin-top: 1rem;
 }
 
-.programme table, tr, td, th {
-  border-collapse:collapse;
-  border: 1px solid !important;
-  text-align: center;
+.programme table,
+tr,
+td,
+th {
+    border-collapse: collapse;
+    border: 1px solid !important;
 }
 
-.programme td {
-  min-width: 25px !important;
+@media screen and (min-width: 768px) {
+    .programme td {
+        min-width: 35px !important;
+    }
 }
+
+@media screen and (max-width: 600px) {
+    .programme {
+        font-size: 0.8em;
+    }
+}
+
 .programme tr {
-  height: 16px !important;
-}
-
-.programme th {
-  height: 19px !important;
-  font-size: 120% !important;
+    height: 1.5rem !important;
 }
 
 .programme th.rider {
-  width: 150px;
+    width: 200px;
+}
+
+.riders th.rider {
+    width: 150px;
+}
+
+.riders {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 1rem;
+}
+
+.riders td {
+    min-width: 20px !important;
+}
+
+.riders img {
+    max-width: 25%;
+    object-fit: contain;
+    margin: auto;
 }
 
 @media print {
-  @page { margin: 0; }
-  body { margin: 1.6cm; }
+    @page {
+        margin: 0;
+    }
+
+    body {
+        margin: 1.6cm;
+    }
+
+    .centred {
+        margin-left: 0;
+        margin-right: auto;
+    }
+
+    .programme {
+        margin-left: 1rem;
+        font-size: 9px !important;
+    }
+
+    .programme td {
+        min-width: 25px !important;
+    }
+
+    .programme tr {
+        height: 16px !important;
+    }
+
+    .programme th {
+        height: 19px !important;
+        font-size: 120% !important;
+    }
+
+    .programme th.rider {
+        width: 150px !important;
+    }
+
+    .riders {
+        flex-wrap: nowrap;
+    }
+
+    .riders td {
+        min-width: 15px !important;
+    }
+
+    .riders img {
+        object-fit: contain;
+        max-width: 20%;
+    }
 }
