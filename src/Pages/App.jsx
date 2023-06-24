@@ -1,18 +1,38 @@
 import { useState } from 'react';
-import Select, { components } from 'react-select';
+import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import AsyncSelect from 'react-select/async';
 import SpeedwayApi from '../api';
 
+/**
+ * Fetch the list of leagues.
+ */
+async function fetchLeagues() {
+  try {
+    let result = await SpeedwayApi.get('/leagues');
+    return result.data;
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/**
+ * A selection form for selecting a home and away team for a programme.
+ */
 function App() {
   const [leagueSelection, setSelectedLeague] = useState(null);
   const [selectedValue, setSelectedValue] = useState(null);
   const [options, setOptions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(true);
   const [teamComponentText, setTeamComponentText] = useState('Home Team:');
+  const controlStyle = {
+    padding: '15px',
+  };
   const navigate = useNavigate();
 
+  /**
+   * Custom change handler for team selection element.
+   */
   function onTeamChange(object, { action }) {
     switch (action) {
       case 'input-change':
@@ -36,50 +56,46 @@ function App() {
     }
   }
 
-  const fetchLeagues = () => {
-    return SpeedwayApi.get('/leagues').then((result) => {
-      const res = result.data;
-      return res;
-    });
-  };
-
-  const handleLeagueChange = (value) => {
+  /**
+   * Update league hook and enable and reset the teams selection.
+   * @param {*} value
+   */
+  function handleLeagueChange(value) {
     setSelectedLeague(value);
     setIsDisabled(false);
     setSelectedValue('');
-  };
-
-  function getTeamOptions() {
-    setIsLoading(true);
-    return SpeedwayApi.get('/teams')
-      .then((result) => {
-        return result.data.filter((team) => team.leagueId == leagueSelection.id);
-      })
-      .then((response) => {
-        setOptions(response.map((tag) => ({ label: tag.name, value: tag.id })));
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => setIsLoading(false));
   }
 
-  function submitForm() {
-    if (selectedValue.length != 2) return;
+  /**
+   * Fill the team selection menu
+   * Filters the result based on selected league.
+   */
+  async function getTeamOptions() {
+    try {
+      let result = await SpeedwayApi.get('/teams');
+      result = result.data.filter((team) => team.leagueId == leagueSelection.id);
+      setOptions(result.map((tag) => ({ label: tag.name, value: tag.id })));
+      return result;
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
+  /**
+   * Handle the form submission.
+   * Passes selected teams to programme page.
+   */
+  function submitForm() {
+    if (selectedValue.length != 2) return; // TODO: validateForm(), this doesnt work if select 3 and then delete one due to async update
     navigate('programme', { replace: false, state: selectedValue });
   }
-
-  const controlStyles = {
-    padding: '15px',
-  };
 
   return (
     <div className='container'>
       <div className='row'>
         <div className='col-md-4'></div>
         <div className='col-md-4'>
-          <p className='h4' style={controlStyles}>
+          <p className='h4' style={controlStyle}>
             League:
           </p>
           <AsyncSelect
@@ -98,7 +114,7 @@ function App() {
       <div className='row'>
         <div className='col-md-4'></div>
         <div className='col-md-4'>
-          <p className='h4' style={controlStyles}>
+          <p className='h4' style={controlStyle}>
             {teamComponentText}
           </p>
           <Select
@@ -109,7 +125,6 @@ function App() {
             options={options}
             onFocus={getTeamOptions}
             onChange={onTeamChange}
-            isLoading={isLoading}
             isClearable
           />
         </div>

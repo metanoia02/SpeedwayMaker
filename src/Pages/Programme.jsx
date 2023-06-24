@@ -30,16 +30,17 @@ function padRiders(teamRiders) {
  * A Speedway score sheet. Blank if no team inputs.
  */
 function Programme() {
+  // Get team ids from form
   const location = useLocation();
-
-  let homeId = undefined;
-  let awayId = undefined;
+  let homeId,
+    awayId = undefined;
 
   if (location.state) {
     homeId = location.state[0].value;
     awayId = location.state[1].value;
   }
 
+  // TODO: Improve type safety of hooks.
   const [homeTeamRiders, setHomeTeamRiders] = useState([]);
   const [awayTeamRiders, setAwayTeamRiders] = useState([]);
   const [heats1, setHeats1] = useState([]);
@@ -75,10 +76,10 @@ function Programme() {
 
       // Fill 16 heats with 4 riders
       for (let i = 0; i < 64; i++) {
-        let rider;
-
+        // Loop over the 4 cell colours every 4 rows.
         if (colourIndex == 4) colourIndex = 0;
 
+        // Define this rows props
         heats[i] = {
           useSpan: i % 2 == 0,
           heat: i % 4 == 0 ? String((heatNumber += 1)) : '',
@@ -88,6 +89,8 @@ function Programme() {
           colour: data.cellColour[colourIndex],
         };
 
+        // Home and away riders alternate every two rows
+        let rider;
         if (isHome) {
           rider = home.filter((rider) => rider.position == heats[i].riderNo);
         } else {
@@ -104,7 +107,9 @@ function Programme() {
             rider[0].rider.lastName;
         }
 
+        // Increment colour row counter
         colourIndex++;
+        // Swap between home and away riders every two rows
         if (i % 2 == 1) isHome = !isHome;
       }
 
@@ -114,7 +119,7 @@ function Programme() {
     }
     fetchData();
   }, []);
-
+  // TODO: Remove and consolidate styles of row and programme
   return (
     <div className='container d-print-inline'>
       <div className='programme table-responsive'>
