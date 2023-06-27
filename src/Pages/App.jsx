@@ -20,6 +20,8 @@ async function fetchLeagues() {
  * A selection form for selecting a home and away team for a programme.
  */
 function App() {
+  const navigate = useNavigate();
+  const [teamErrorMsg, setteamErrorMsg] = useState('');
   const [leagueSelection, setSelectedLeague] = useState(null);
   const [selectedValue, setSelectedValue] = useState(null);
   const [options, setOptions] = useState([]);
@@ -28,7 +30,10 @@ function App() {
   const controlStyle = {
     padding: '15px',
   };
-  const navigate = useNavigate();
+  const errorStyle = {
+    color: 'red',
+    fontWeight: 'bold',
+  };
 
   /**
    * Custom change handler for team selection element.
@@ -41,7 +46,7 @@ function App() {
       case 'menu-close':
         break;
       case 'clear':
-        setSelectedValue();
+        setSelectedValue(null);
         setTeamComponentText('Select Home Team:');
         break;
       case 'select-option':
@@ -49,11 +54,12 @@ function App() {
         setTeamComponentText('Select Away Team:');
         break;
       case 'remove-value':
-        setSelectedValue();
+        if (object) setSelectedValue(object);
         break;
       default:
         break;
     }
+    validateForm(object);
   }
 
   /**
@@ -81,13 +87,22 @@ function App() {
     }
   }
 
+  function validateForm(object) {
+    if (!object || object.length != 2) {
+      setteamErrorMsg('Select two teams');
+      return false;
+    }
+    setteamErrorMsg('');
+    return true;
+  }
+
   /**
    * Handle the form submission.
    * Passes selected teams to programme page.
    */
   function submitForm() {
-    if (selectedValue.length != 2) return; // TODO: validateForm(), this doesnt work if select 3 and then delete one due to async update
-    navigate('programme', { replace: false, state: selectedValue });
+    if (validateForm(selectedValue))
+      navigate('programme', { replace: false, state: selectedValue });
   }
 
   return (
@@ -99,7 +114,6 @@ function App() {
             League:
           </p>
           <AsyncSelect
-            isReq
             cacheOptions
             defaultOptions
             value={leagueSelection}
@@ -127,6 +141,7 @@ function App() {
             onChange={onTeamChange}
             isClearable
           />
+          <span style={errorStyle}>{teamErrorMsg}</span>
         </div>
       </div>
       <br />
