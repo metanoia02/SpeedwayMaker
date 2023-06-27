@@ -136,7 +136,7 @@ function Programme() {
                   ))}
                 </tbody>
               </table>
-              <img src={'./teams/' + homeId + '.png'} />
+              {homeId && <img src={'./teams/' + homeId + '.png'} />}
             </div>
             <br />
             <div className='heats'>
@@ -164,7 +164,7 @@ function Programme() {
                   ))}
                 </tbody>
               </table>
-              <img src={'./teams/' + awayId + '.png'} />
+              {homeId && <img src={'./teams/' + awayId + '.png'} />}
             </div>
             <br />
             <div className='heats'>
