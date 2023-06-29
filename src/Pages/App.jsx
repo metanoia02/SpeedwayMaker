@@ -2,15 +2,14 @@ import { useState } from 'react';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import AsyncSelect from 'react-select/async';
-import SpeedwayApi from '../api';
 
 /**
  * Fetch the list of leagues.
  */
 async function fetchLeagues() {
   try {
-    let result = await SpeedwayApi.get('/leagues');
-    return result.data;
+    let result = (await fetch('https://orange.zapto.org:3900/api/leagues')).json();
+    return result;
   } catch (error) {
     console.error(error);
   }
@@ -78,10 +77,11 @@ function App() {
    */
   async function getTeamOptions() {
     try {
-      let result = await SpeedwayApi.get('/teams');
-      result = result.data.filter((team) => team.leagueId == leagueSelection.id);
-      setOptions(result.map((tag) => ({ label: tag.name, value: tag.id })));
-      return result;
+      const result = await fetch('https://orange.zapto.org:3900/api/teams');
+      const jsonResult = await result.json();
+      const teams = jsonResult.filter((team) => team.leagueId == leagueSelection.id);
+      setOptions(teams.map((tag) => ({ label: tag.name, value: tag.id })));
+      return teams;
     } catch (error) {
       console.error(error);
     }

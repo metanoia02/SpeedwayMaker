@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
-import SpeedwayApi from '../api';
 import data from '../data';
 
 import { HeatHeading } from '../Components/HeatHeading';
@@ -48,17 +47,18 @@ function Programme() {
 
   useEffect(() => {
     async function fetchData() {
-      const result = await SpeedwayApi.get('/TeamRider');
+      const result = await fetch('https://orange.zapto.org:3900/api/TeamRider');
+      const resultJson = await result.json();
 
       let home = [];
       let away = [];
 
       // Make sorted lists of home and away riders.
-      home = result.data
+      home = resultJson
         .filter((rider) => rider.teamId == homeId)
         .sort((a, b) => a.position - b.position);
 
-      away = result.data
+      away = resultJson
         .filter((rider) => rider.teamId == awayId)
         .sort((a, b) => a.position - b.position);
 
