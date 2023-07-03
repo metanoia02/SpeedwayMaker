@@ -2,18 +2,7 @@ import { useState } from 'react';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import AsyncSelect from 'react-select/async';
-
-/**
- * Fetch the list of leagues.
- */
-async function fetchLeagues() {
-  try {
-    let result = (await fetch('https://orange.zapto.org:3900/api/leagues')).json();
-    return result;
-  } catch (error) {
-    console.error(error);
-  }
-}
+import { fetchApi } from '../fetchApi';
 
 /**
  * A selection form for selecting a home and away team for a programme.
@@ -22,10 +11,11 @@ function App() {
   const navigate = useNavigate();
   const [teamErrorMsg, setteamErrorMsg] = useState('');
   const [leagueSelection, setSelectedLeague] = useState(null);
-  const [selectedValue, setSelectedValue] = useState(null);
-  const [options, setOptions] = useState([]);
+  const [selectedTeams, setSelectedTeams] = useState(null);
+  const [teamOptions, setTeamOptions] = useState([]);
   const [isDisabled, setIsDisabled] = useState(true);
   const [teamComponentText, setTeamComponentText] = useState('Home Team:');
+  const [closeTeamMenu, setCloseTeamMenu] = useState(false);
   const controlStyle = {
     padding: '15px',
   };
@@ -34,26 +24,34 @@ function App() {
     fontWeight: 'bold',
   };
 
+  async function fetchLeagues() {
+    return await fetchApi('leagues');
+  }
+
   /**
    * Custom change handler for team selection element.
    */
   function onTeamChange(object, { action }) {
     switch (action) {
       case 'input-change':
-        if (object) setSelectedValue(object);
+        if (object) setSelectedTeams(object);
         break;
       case 'menu-close':
         break;
       case 'clear':
-        setSelectedValue(null);
+        setSelectedTeams(null);
         setTeamComponentText('Select Home Team:');
+        setCloseTeamMenu(false);
         break;
       case 'select-option':
-        if (object) setSelectedValue(object);
+        if (object) setSelectedTeams(object);
         setTeamComponentText('Select Away Team:');
+        setCloseTeamMenu(true);
         break;
       case 'remove-value':
-        if (object) setSelectedValue(object);
+        if (object) setSelectedTeams(object);
+        if (object.length == 0) setTeamComponentText('Select Home Team:');
+        setCloseTeamMenu(false);
         break;
       default:
         break;
@@ -68,7 +66,7 @@ function App() {
   function handleLeagueChange(value) {
     setSelectedLeague(value);
     setIsDisabled(false);
-    setSelectedValue('');
+    setSelectedTeams('');
   }
 
   /**
@@ -77,10 +75,9 @@ function App() {
    */
   async function getTeamOptions() {
     try {
-      const result = await fetch('https://orange.zapto.org:3900/api/teams');
-      const jsonResult = await result.json();
-      const teams = jsonResult.filter((team) => team.leagueId == leagueSelection.id);
-      setOptions(teams.map((tag) => ({ label: tag.name, value: tag.id })));
+      const result = await fetchApi('teams');
+      const teams = result.filter((team) => team.leagueId == leagueSelection.id);
+      setTeamOptions(teams.map((tag) => ({ label: tag.name, value: tag.id })));
       return teams;
     } catch (error) {
       console.error(error);
@@ -101,8 +98,8 @@ function App() {
    * Passes selected teams to programme page.
    */
   function submitForm() {
-    if (validateForm(selectedValue))
-      navigate('programme', { replace: false, state: selectedValue });
+    if (validateForm(selectedTeams))
+      navigate('programme', { replace: false, state: selectedTeams });
   }
 
   return (
@@ -133,10 +130,10 @@ function App() {
           </p>
           <Select
             isDisabled={isDisabled}
-            closeMenuOnSelect={false}
+            closeMenuOnSelect={closeTeamMenu}
             isMulti
-            value={selectedValue}
-            options={options}
+            value={selectedTeams}
+            options={teamOptions}
             onFocus={getTeamOptions}
             onChange={onTeamChange}
             isClearable
